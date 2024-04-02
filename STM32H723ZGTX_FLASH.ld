@@ -46,9 +46,9 @@ MEMORY
   ITCMRAM (xrw)    : ORIGIN = 0x00000000,   LENGTH = 64K
   DTCMRAM (xrw)    : ORIGIN = 0x20000000,   LENGTH = 128K
   FLASH    (rx)    : ORIGIN = 0x08000000,   LENGTH = 1024K
-  RAM_D1  (xrw)    : ORIGIN = 0x24000000,   LENGTH = 320K
-  RAM_D2  (xrw)    : ORIGIN = 0x30000000,   LENGTH = 32K
-  RAM_D3  (xrw)    : ORIGIN = 0x38000000,   LENGTH = 16K
+  RAM_D1  (xrw)    : ORIGIN = 0x24000000,   LENGTH = 512K
+  RAM_D2  (xrw)    : ORIGIN = 0x30000000,   LENGTH = 288K
+  RAM_D3  (xrw)    : ORIGIN = 0x38000000,   LENGTH = 64K
 }
 
 /* Define output sections */
@@ -160,7 +160,18 @@ SECTIONS
     . = . + _Min_Heap_Size;
     . = . + _Min_Stack_Size;
     . = ALIGN(8);
-  } >RAM_D1
+  } >RAM_D1  
+  
+  /* Modification start */
+  .lwip_sec (NOLOAD) :
+  {
+    . = ABSOLUTE(0x30000000);
+    *(.RxDecripSection) 
+    
+    . = ABSOLUTE(0x30000060);
+    *(.TxDecripSection)
+  } >RAM_D2
+  /* Modification end */
 
   /* Remove information from the standard libraries */
   /DISCARD/ :
